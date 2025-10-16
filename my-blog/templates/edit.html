@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>編輯：{{ post.title }}</title>
+</head>
+<body>
+  <h1>編輯文章</h1>
+  <form id="edit-form">
+    <div>
+      <label>標題：<input type="text" id="title" required value="{{ post.title }}"></label>
+    </div>
+    <div>
+      <label>作者：<input type="text" id="author" required value="{{ post.author }}"></label>
+    </div>
+    <div>
+      <label>內容：</label><br>
+      <textarea id="content" rows="10" cols="60" required>{{ post.content }}</textarea>
+    </div>
+    <div>
+      <button type="submit">儲存</button>
+      <a href="{{ url_for('show_post_page', post_id=post.id) }}">取消</a>
+    </div>
+  </form>
+
+  <script>
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        content: document.getElementById('content').value
+      };
+
+      const res = await fetch(`/api/posts/{{ post.id }}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        window.location.href = `/post/${updated.id}`;
+      } else {
+        const err = await res.json();
+        alert('更新失敗：' + (err.error || JSON.stringify(err)));
+      }
+    });
+  </script>
+</body>
+</html>

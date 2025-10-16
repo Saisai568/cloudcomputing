@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>我的部落格 - 文章列表</title>
+</head>
+<body>
+  <h1>文章列表</h1>
+  <p><a href="{{ url_for('new_post_page') }}">新增文章</a></p>
+
+  <ul id="posts-list">
+    {% for p in posts %}
+      <li>
+        <a href="{{ url_for('show_post_page', post_id=p.id) }}">{{ p.title }}</a>
+        — {{ p.author }}
+        <small>（{{ p.created_at.strftime('%Y-%m-%d %H:%M') }}）</small>
+      </li>
+    {% else %}
+      <li>目前沒有文章</li>
+    {% endfor %}
+  </ul>
+
+  <!-- 可選：用 fetch 重新抓 API 更新列表（非必要） -->
+  <script>
+    // 範例：若你想動態刷新列表可以解開下面程式碼
+    /*
+    async function refresh() {
+      const r = await fetch('/api/posts');
+      const data = await r.json();
+      const ul = document.getElementById('posts-list');
+      ul.innerHTML = '';
+      if (data.length === 0) {
+        ul.innerHTML = '<li>目前沒有文章</li>';
+        return;
+      }
+      for (const p of data) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="/post/${p.id}">${p.title}</a> — ${p.author}`;
+        ul.appendChild(li);
+      }
+    }
+    refresh();
+    */
+  </script>
+</body>
+</html>

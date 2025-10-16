@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>新增文章</title>
+</head>
+<body>
+  <h1>新增文章</h1>
+  <form id="new-form">
+    <div>
+      <label>標題：<input type="text" name="title" id="title" required></label>
+    </div>
+    <div>
+      <label>作者：<input type="text" name="author" id="author" required></label>
+    </div>
+    <div>
+      <label>內容：</label><br>
+      <textarea id="content" name="content" rows="10" cols="60" required></textarea>
+    </div>
+    <div>
+      <button type="submit">儲存</button>
+      <a href="{{ url_for('index') }}">取消</a>
+    </div>
+  </form>
+
+  <script>
+    document.getElementById('new-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        content: document.getElementById('content').value
+      };
+
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if (res.status === 201) {
+        const created = await res.json();
+        // 導回剛建立的文章頁面
+        window.location.href = `/post/${created.id}`;
+      } else {
+        const err = await res.json();
+        alert('建立失敗：' + (err.error || JSON.stringify(err)));
+      }
+    });
+  </script>
+</body>
+</html>
