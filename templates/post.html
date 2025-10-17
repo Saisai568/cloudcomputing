@@ -3,32 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <title>{{ post.title }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <h1>{{ post.title }}</h1>
-  <p>作者：{{ post.author }}</p>
-  <p><small>發布：{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small></p>
-  <hr>
-  <div id="content">{{ post.content | e | replace('\n','<br>') | safe }}</div>
-  <hr>
-  <a href="{{ url_for('index') }}"><button>回到文章列表</button></a>
-  <a href="{{ url_for('edit_post_page', post_id=post.id) }}"><button>編輯文章</button></a>
-  <button id="delete-btn">刪除文章</button>
+<body class="bg-light">
 
-  <script>
-    document.getElementById('delete-btn').addEventListener('click', async () => {
-      if (!confirm('確定要刪除此文章？')) return;
-      const res = await fetch(`/api/posts/{{ post.id }}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        alert('已刪除');
-        window.location.href = '/';
-      } else {
-        const err = await res.json();
-        alert('刪除失敗：' + (err.error || JSON.stringify(err)));
-      }
-    });
-  </script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="/">Tech Blog</a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">{{ post.title }}</h2>
+      <p class="text-muted">作者：{{ post.author }} | {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+      <hr>
+      <p>{{ post.content | e | replace('\n','<br>') | safe }}</p>
+      <hr>
+      <button onclick="location.href='/'" class="btn btn-secondary">回到列表</button>
+      <button onclick="location.href='/post/{{ post.id }}/edit'" class="btn btn-success">編輯</button>
+      <button id="delete-btn" class="btn btn-danger">刪除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('delete-btn').addEventListener('click', async () => {
+  if (!confirm('確定要刪除此文章？')) return;
+  const res = await fetch(`/api/posts/{{ post.id }}`, { method: 'DELETE' });
+  if (res.ok) {
+    alert('已刪除');
+    window.location.href = '/';
+  } else {
+    alert('刪除失敗');
+  }
+});
+</script>
+
 </body>
 </html>
